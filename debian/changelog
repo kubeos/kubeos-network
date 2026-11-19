@@ -1,3 +1,11 @@
+kubeos-network (1.9.1-8) trixie; urgency=medium
+
+  * Add debian/kubeos-network.lintian-overrides for file-in-etc-not-marked-as-conffile: the files
+    under /etc are deliberately replaced on upgrade (decision D5). Found by the new CI
+    check, which runs lintian at error level on every push.
+
+ -- KubeOS <mail@kubeos.in>  Fri, 20 Nov 2026 02:05:00 +0530
+
 kubeos-network (1.9.1-7) trixie; urgency=medium
 
   * Debian revision numbering: 1.9.1-1kubeos7 -> 1.9.1-7. The revision is a plain Debian one now

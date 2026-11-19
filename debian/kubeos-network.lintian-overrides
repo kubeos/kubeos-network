@@ -1,0 +1,4 @@
+# Same decision (D5): these three drop-ins belong to the package and are replaced on upgrade, so a
+# node always runs the settings the KubeOS release expects. An operator who wants different values
+# writes their own file beside them (/etc/sysctl.d/, /etc/modules-load.d/), which dpkg never touches.
+kubeos-network: file-in-etc-not-marked-as-conffile
