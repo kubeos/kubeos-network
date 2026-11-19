@@ -10,3 +10,11 @@ override_dh_auto_build:
 override_dh_installdeb:
 	dh_installdeb
 	: > debian/kubeos-network/DEBIAN/conffiles
+
+# The upstream binaries are Go builds with compressed .debug_abbrev sections, which dwz
+# refuses to merge ("Found compressed .debug_abbrev section, not attempting dwz
+# compression"), and with more than one such file the step aborts the whole build. These
+# artefacts are shipped exactly as upstream publishes them, so there is nothing to
+# optimise here.
+override_dh_dwz:
+	@echo "$(shell sed -n 's/^Source:[[:space:]]*//p' debian/control | head -n 1): dwz skipped (upstream Go binaries)"
