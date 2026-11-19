@@ -1,8 +1,9 @@
 #!/bin/sh
-# KubeOS network: fetch the three pinned upstream artefacts at build time.
+# KubeOS network: fetch the two pinned upstream artefacts at build time.
 #
-# WHY    flannel, the CNI plugins and CoreDNS all ship as GitHub release tarballs, none of them
-#        is packaged for Debian, and the node has no network after installation. Fetching them
+# WHY    flannel and CoreDNS ship as GitHub release tarballs, neither is packaged for Debian,
+#        and the node has no network after installation. (The CNI plugins come from the
+#        kubernetes-cni package - see debian/control.) Fetching them
 #        here keeps the repository small; every download is verified - with the checksum file
 #        the project publishes where there is one, and with a pinned digest where there is not
 #        (flannel publishes none: that pin was measured from the v0.28.10 tarball).
