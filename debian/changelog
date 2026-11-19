@@ -1,3 +1,9 @@
+kubeos-network (1.9.1-9) trixie; urgency=medium
+
+  * More lintian overrides, each with its reason: statically-linked-binary (upstream Go build of coredns).
+
+ -- KubeOS <mail@kubeos.in>  Fri, 20 Nov 2026 02:15:00 +0530
+
 kubeos-network (1.9.1-8) trixie; urgency=medium
 
   * Add debian/kubeos-network.lintian-overrides for file-in-etc-not-marked-as-conffile: the files

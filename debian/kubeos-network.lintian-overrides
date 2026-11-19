@@ -2,3 +2,7 @@
 # node always runs the settings the KubeOS release expects. An operator who wants different values
 # writes their own file beside them (/etc/sysctl.d/, /etc/modules-load.d/), which dpkg never touches.
 kubeos-network: file-in-etc-not-marked-as-conffile
+
+# usr/bin/coredns is the upstream Go build. Go binaries are static by construction; the alternative
+# is not to ship DNS at all.
+kubeos-network: statically-linked-binary
