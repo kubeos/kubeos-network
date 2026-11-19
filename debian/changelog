@@ -1,3 +1,11 @@
+kubeos-network (1.9.1-7) trixie; urgency=medium
+
+  * Debian revision numbering: 1.9.1-1kubeos7 -> 1.9.1-7. The revision is a plain Debian one now
+    instead of the 1kubeosN prefix the first uploads used; the upstream version is
+    unchanged. The KubeOS distribution version lives in kubeos-base, which is 0.2.0.
+
+ -- KubeOS <mail@kubeos.in>  Fri, 20 Nov 2026 01:00:00 +0530
+
 kubeos-network (1.9.1-1kubeos7) trixie; urgency=medium
 
   * kubeos-coredns.service: condition on /etc/kubernetes/coredns.conf instead of
