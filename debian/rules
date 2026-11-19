@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	sh debian/fetch-upstream.sh $(CURDIR)/payload/usr/bin $(CURDIR)/payload/opt/cni/bin
+
+# /etc/crictl.yaml, the sysctl values and the modules list are KubeOS's own static
+# files, not administrator-editable defaults: replace them on upgrade (D5).
+override_dh_installdeb:
+	dh_installdeb
+	: > debian/kubeos-network/DEBIAN/conffiles

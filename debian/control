@@ -1,0 +1,22 @@
+Source: kubeos-network
+Section: admin
+Priority: optional
+Maintainer: KubeOS <mail@kubeos.in>
+Build-Depends: debhelper-compat (= 13), curl, ca-certificates
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://kubeos.in/
+
+Package: kubeos-network
+Architecture: amd64
+Depends: ${misc:Depends}, iptables, iproute2, ca-certificates
+Description: KubeOS pod networking: CNI plugins, flanneld and cluster DNS
+ The three pieces of the pod network a KubeOS node runs itself, without a DaemonSet
+ and without a Pod: the CNI plugins containerd calls (bridge, host-local, loopback,
+ portmap in /opt/cni/bin), flanneld for the overlay, and CoreDNS answering cluster
+ names as a systemd unit.
+ .
+ Also carries the runtime prerequisites that belong to networking: /etc/crictl.yaml,
+ the sysctl values pod routing needs and the br_netfilter/overlay modules. Upstream
+ ships no Debian packages for any of the binaries, so they are fetched and
+ checksum-verified at build time.

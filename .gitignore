@@ -1,0 +1,11 @@
+debian/files
+debian/*.substvars
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/kubeos-network/
+payload/usr/bin/flanneld
+payload/usr/bin/coredns
+payload/opt/cni/bin/*
+*.deb
+*.buildinfo
+*.changes

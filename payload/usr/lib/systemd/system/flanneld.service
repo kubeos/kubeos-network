@@ -1,0 +1,62 @@
+# KubeOS: flanneld as a native systemd service (the CNI).
+#
+# Part of the "no base Pods" design (docs/NATIVE-CONTROL-PLANE.md, decision D1):
+# Calico ran as a DaemonSet + Deployment; flannel runs as this unit instead, so no
+# CNI pod exists. Cost accepted with D1: Kubernetes NetworkPolicy is gone.
+#
+# How the pieces fit:
+#   flanneld --kube-subnet-mgr   reads this node's podCIDR from the API (the
+#                                controller-manager allocates it from --cluster-cidr)
+#                                and writes /run/flannel/subnet.env
+#   /etc/cni/net.d/10-flannel.conflist  tells containerd to use the bridge plugin
+#                                with host-local IPAM on the subnet flannel picked
+#   /opt/cni/bin/bridge,host-local,loopback,portmap  the plugins themselves, baked
+#                                by hook 9026
+#
+# node-setup starts this AFTER kubelet has registered the Node: the
+# kube-subnet manager needs node.spec.podCIDR, which the controller-manager stamps
+# once the node exists. There is deliberately no Before=kubelet.service here.
+#
+# --kube-subnet-mgr needs an identity that may read the Node object and write
+# events; node-setup creates it with the flannel RBAC manifest and points
+# this unit at /etc/kubernetes/flannel.conf. Nothing here talks to the network
+# directly: the VXLAN backing is created by flanneld itself.
+[Unit]
+Description=KubeOS flanneld (pod network)
+Documentation=https://kubeos.in/
+ConditionPathExists=/etc/kubernetes/flannel.conf
+After=network-online.target kube-apiserver.service
+Wants=network-online.target
+Before=kubeos-coredns.service
+
+[Service]
+# Type=simple on purpose: flanneld does not send sd_notify, so Type=notify would
+# hang the start job until TimeoutStartSec. node-setup waits for
+# /run/flannel/subnet.env instead, which is the real "ready" signal.
+Type=simple
+EnvironmentFile=-/etc/kubeos/cluster-network.conf
+# flanneld's kube subnet manager refuses to start without these two - as a
+# DaemonSet the downward API provided them, as a host service nothing does, and the
+# error ("env variables POD_NAME and POD_NAMESPACE must be set") names neither the
+# unit nor the fix. They are only used for lease/event bookkeeping, so any stable
+# pair works.
+Environment=POD_NAME=kubeos-flanneld
+Environment=POD_NAMESPACE=kube-system
+# Flags verified against `flanneld --help` on an installed node (2026-11-11):
+# there is no -logtostderr and no -log_file, and passing either makes flanneld
+# print its usage and exit 0 - which looks like "started" until you check for
+# /run/flannel/subnet.env. It logs to stderr, so the journal is enough.
+ExecStart=/usr/bin/flanneld \
+    --kube-subnet-mgr \
+    --kubeconfig-file=/etc/kubernetes/flannel.conf \
+    --iface=${NODE_IP} \
+    --ip-masq
+RuntimeDirectory=flannel
+RuntimeDirectoryMode=0755
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

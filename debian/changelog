@@ -1,0 +1,7 @@
+kubeos-network (1.9.1-1kubeos1) trixie; urgency=medium
+
+  * Initial packaging. CNI plugins v1.9.1, flanneld v0.28.10 and CoreDNS v1.14.6,
+    the same artefacts build hook 9026 fetched, now dpkg-owned and in /usr/bin and
+    /opt/cni/bin instead of /usr/local/bin.
+
+ -- KubeOS <mail@kubeos.in>  Thu, 19 Nov 2026 09:55:00 +0530

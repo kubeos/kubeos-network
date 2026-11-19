@@ -1,0 +1,37 @@
+# KubeOS: DNS as a native systemd service (decision D2).
+#
+# CoreDNS normally runs as a Deployment with a `kube-dns` Service in front of it. To
+# keep `kubectl get pods -A` empty, the binary runs here as a host service instead
+# (baked by hook 9026) and reaches pods through a hand-made Service + EndpointSlice
+# that first boot creates:
+#
+#   pods ask 10.96.0.10:53          (the cluster IP, from kubelet --cluster-dns)
+#   kube-proxy DNATs that to        ${NODE_IP}:53   (the EndpointSlice this unit's
+#                                                   Corefile is bound to)
+#   this process answers            cluster.local + in-addr.arpa, forwards the rest
+#
+# The trade-offs accepted with D2, all of them documented in the plan: the
+# EndpointSlice is static (fine on a single node with a static-IP installer), a node
+# IP change needs `systemctl restart kubeos-coredns`, and there is no rolling
+# upgrade of DNS. The Corefile is generated at first boot because it must carry the
+# node address in a `bind` directive - the only way to keep port 53 off 0.0.0.0,
+# where it would fight whatever local resolver the machine already runs.
+[Unit]
+Description=KubeOS DNS (CoreDNS)
+Documentation=https://kubeos.in/
+ConditionPathExists=/etc/coredns/Corefile
+After=network-online.target kube-apiserver.service kube-proxy.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/coredns -conf /etc/coredns/Corefile
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+# Port 53 below 1024 is fine: this unit runs as root like every other one here.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
