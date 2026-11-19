@@ -19,7 +19,13 @@
 [Unit]
 Description=KubeOS DNS (CoreDNS)
 Documentation=https://kubeos.in/
-ConditionPathExists=/etc/coredns/Corefile
+# The condition must be the file that decides "this machine is the CLUSTER's DNS": the kubeconfig
+# CoreDNS reads Services with. /etc/coredns/Corefile is the wrong test - it is generated at first
+# boot and `kubeadm reset` does not remove it, so a machine that joined another cluster as a worker
+# still satisfied the condition, was started at boot by the shipped .wants link, and restarted
+# every 5 s for ever with "stat /etc/kubernetes/coredns.conf: no such file or directory" (measured
+# on kubeos3 on 2026-11-20). /etc/kubernetes/coredns.conf exists only where a control plane ran.
+ConditionPathExists=/etc/kubernetes/coredns.conf
 After=network-online.target kube-apiserver.service kube-proxy.service
 Wants=network-online.target
 

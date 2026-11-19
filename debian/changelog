@@ -1,3 +1,18 @@
+kubeos-network (1.9.1-1kubeos7) trixie; urgency=medium
+
+  * kubeos-coredns.service: condition on /etc/kubernetes/coredns.conf instead of
+    /etc/coredns/Corefile. The Corefile is generated at first boot and survives
+    `kubeadm reset`, so a machine that later joined another cluster as a worker satisfied
+    the condition, the shipped .wants link started it at boot, and it restarted every 5 s
+    for ever ("stat /etc/kubernetes/coredns.conf: no such file or directory") - a failed
+    unit and a journal full of errors on every worker, measured on kubeos3 on 2026-11-20.
+    The kubeconfig only exists where a control plane ran, so a worker now skips the unit.
+    Note that `systemctl is-enabled` said "disabled" all along: the vendor .wants link
+    starts the unit at boot regardless, so that output is not evidence that a unit on a
+    worker never runs.
+
+ -- KubeOS <mail@kubeos.in>  Fri, 20 Nov 2026 00:40:00 +0530
+
 kubeos-network (1.9.1-1kubeos6) trixie; urgency=medium
 
   * dh_installsystemd gets --no-enable only, not --no-start. --no-start also stops the
