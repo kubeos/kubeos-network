@@ -1,3 +1,14 @@
+kubeos-network (1.9.1-1kubeos3) trixie; urgency=medium
+
+  * Ship /etc/modules-load.d/kubeos.conf instead of overwriting
+    /etc/modules-load.d/modules.conf. That file belongs to the systemd package, so dpkg
+    refused to install this one at all: "trying to overwrite '/etc/modules-load.d/
+    modules.conf', which is also in package systemd". Found by installing the archive on
+    a live node - the ISO used to overwrite the file because includes.chroot is copied
+    after the package install, which is exactly a problem packaging has to solve properly.
+
+ -- KubeOS <mail@kubeos.in>  Thu, 19 Nov 2026 10:35:00 +0530
+
 kubeos-network (1.9.1-1kubeos2) trixie; urgency=medium
 
   * Ship the unit enablement as a package file. Build hook 9050 called

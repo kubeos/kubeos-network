@@ -3,5 +3,5 @@ payload/opt/cni/bin/*                        opt/cni/bin/
 payload/usr/lib/systemd/system/*.service     usr/lib/systemd/system/
 payload/etc/crictl.yaml                      etc/
 payload/etc/sysctl.d/kubeos.conf             etc/sysctl.d/
-payload/etc/modules-load.d/modules.conf      etc/modules-load.d/
+payload/etc/modules-load.d/kubeos.conf       etc/modules-load.d/
 payload/usr/lib/systemd/system/multi-user.target.wants/*  usr/lib/systemd/system/multi-user.target.wants/
