@@ -1,3 +1,13 @@
+kubeos-network (1.9.1-1kubeos4) trixie; urgency=medium
+
+  * Stop shipping the CNI plugins. /opt/cni/bin already belongs to kubernetes-cni,
+    which the kubelet package depends on at the same upstream version, so dpkg refused
+    the package a second time: "trying to overwrite '/opt/cni/bin/bridge', which is
+    also in package kubernetes-cni". Depend on it instead of duplicating it - 27 MB
+    smaller, and one owner per path.
+
+ -- KubeOS <mail@kubeos.in>  Thu, 19 Nov 2026 10:45:00 +0530
+
 kubeos-network (1.9.1-1kubeos3) trixie; urgency=medium
 
   * Ship /etc/modules-load.d/kubeos.conf instead of overwriting

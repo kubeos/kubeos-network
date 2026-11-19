@@ -1,5 +1,4 @@
 payload/usr/bin/*                            usr/bin/
-payload/opt/cni/bin/*                        opt/cni/bin/
 payload/usr/lib/systemd/system/*.service     usr/lib/systemd/system/
 payload/etc/crictl.yaml                      etc/
 payload/etc/sysctl.d/kubeos.conf             etc/sysctl.d/
